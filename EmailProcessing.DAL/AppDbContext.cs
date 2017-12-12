@@ -19,5 +19,6 @@ namespace EmailProcessing.DAL
             // Insure Identity Entities are accounted for.
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

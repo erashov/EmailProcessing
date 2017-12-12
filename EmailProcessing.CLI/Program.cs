@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace EmailProcessing.CLI
 {
@@ -25,21 +26,18 @@ namespace EmailProcessing.CLI
             // ConfigureServices(serviceCollection, configuration.GetConnectionString("DBConnection"));
 
             Console.WriteLine(configuration.GetConnectionString("DBConnection"));
-
-            var serviceProvider = new ServiceCollection().AddDbContextPool<AppDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DBConnection")))
+            var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
+            var serviceProvider = new ServiceCollection().AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DBConnection"), sql => sql.MigrationsAssembly(migrationsAssembly)))
                        .AddLogging()
                        .AddSingleton<IEmailService, EmailService>().AddTransient<IBaseRepository<Setting>, EmailProcessingRepository>()
                           .BuildServiceProvider();
 
 
 
-            serviceProvider
-                .GetService<ILoggerFactory>()
-                .AddConsole(LogLevel.Debug);
+            serviceProvider.GetService<ILoggerFactory>().AddConsole(LogLevel.Debug);
 
-            var logger = serviceProvider.GetService<ILoggerFactory>()
-                .CreateLogger<Program>();
+            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Program>();
             logger.LogDebug("Starting application");
 
             //do the actual work here
