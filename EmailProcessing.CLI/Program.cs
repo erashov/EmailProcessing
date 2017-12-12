@@ -21,18 +21,18 @@ namespace EmailProcessing.CLI
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             IConfigurationRoot configuration = builder.Build();
-          //  var serviceCollection = new ServiceCollection();
-           // ConfigureServices(serviceCollection, configuration.GetConnectionString("DBConnection"));
+            //  var serviceCollection = new ServiceCollection();
+            // ConfigureServices(serviceCollection, configuration.GetConnectionString("DBConnection"));
 
-             Console.WriteLine(configuration.GetConnectionString("DBConnection"));
+            Console.WriteLine(configuration.GetConnectionString("DBConnection"));
 
             var serviceProvider = new ServiceCollection().AddDbContextPool<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DBConnection")))
                        .AddLogging()
-                       .AddSingleton<IEmailService, EmailService>()  .AddTransient<IBaseRepository<Setting>, EmailProcessingRepository>()
+                       .AddSingleton<IEmailService, EmailService>().AddTransient<IBaseRepository<Setting>, EmailProcessingRepository>()
                           .BuildServiceProvider();
 
-           
+
 
             serviceProvider
                 .GetService<ILoggerFactory>()
@@ -45,7 +45,7 @@ namespace EmailProcessing.CLI
             //do the actual work here
             var bar = serviceProvider.GetService<IEmailService>();
             var settings = serviceProvider.GetService<IBaseRepository<Setting>>();
-            var c=settings.Find();
+            var c = settings.Find();
             var cc = bar.PaerserEmailAsync("", "", "", "");
             System.Console.WriteLine($"Count:{cc.Result}");
             System.Console.ReadLine();
@@ -66,7 +66,7 @@ namespace EmailProcessing.CLI
             //serviceCollection.AddTransient<ITestService, TestService>();
 
             // add app
-           // serviceCollection.AddTransient<App>();
+            // serviceCollection.AddTransient<App>();
         }
     }
 }

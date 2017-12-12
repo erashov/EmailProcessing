@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EmailProcessing.Service
 {
-    class SoapService
+    public class SoapService:ISoapService
     {
     }
 }

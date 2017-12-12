@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EmailProcessing.Service
 {
-    interface ISoapService
+    public interface ISoapService
     {
     }
 }
