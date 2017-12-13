@@ -11,6 +11,7 @@ namespace EmailProcessing.DAL.Entities
         public string Name { get; set; }
         public string InputMail { get; set; }
         public string InputMailPassword { get; set; }
+        public string Subject { get; set; }
         public string OutputMail { get; set; }
         public string ServiceUrl { get; set; }
         public string ImapServer { get; set; }
