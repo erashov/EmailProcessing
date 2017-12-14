@@ -24,7 +24,7 @@ namespace EmailProcessing.Repository.Concrete
 
         public IQueryable<Setting> Find()
         {
-            return _appContext.Serrings.Include(c => c.ParamSettings);
+            return _appContext.Serrings.Include(c => c.ParamSettings).Include(c=>c.RequestType);
         }
 
         public IQueryable<Setting> Find(string filter)

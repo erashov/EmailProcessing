@@ -28,7 +28,7 @@ namespace EmailProcessing.WebUI
             services.AddDbContextPool<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("EmailProcessing.DAL")));
 
-            //services.AddTransient<DataSeeder>();
+            services.AddTransient<DataSeeder>();
 
             services.AddIdentity<UserEntity, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
@@ -37,7 +37,7 @@ namespace EmailProcessing.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DataSeeder seeder)
         {
             if (env.IsDevelopment())
             {
@@ -64,6 +64,7 @@ namespace EmailProcessing.WebUI
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
+            seeder.SeedAsync().Wait();
         }
     }
 }

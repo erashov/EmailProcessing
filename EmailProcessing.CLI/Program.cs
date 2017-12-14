@@ -34,20 +34,19 @@ namespace EmailProcessing.CLI
                           .BuildServiceProvider();
 
 
-
-            serviceProvider.GetService<ILoggerFactory>().AddConsole(LogLevel.Debug);
-
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Program>();
-            logger.LogDebug("Starting application");
-
+  
             //do the actual work here
             var bar = serviceProvider.GetService<IEmailService>();
             var settings = serviceProvider.GetService<IBaseRepository<Setting>>();
-            var c = settings.Find();
-            var cc = bar.PaerserEmailAsync("", "", "", "");
-            System.Console.WriteLine($"Count:{cc.Result}");
-            System.Console.ReadLine();
-            logger.LogDebug("All done!");
+            foreach(var s in settings.Find()) {
+
+                var cc = bar.PaerserEmailAsync(s);
+                Console.WriteLine($"Count:{cc.Result}");
+            }
+            
+            
+            Console.ReadLine();
+     
         }
         private static void ConfigureServices(IServiceCollection serviceCollection, string connection)
         {

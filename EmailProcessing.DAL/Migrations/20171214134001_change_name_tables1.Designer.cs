@@ -11,9 +11,10 @@ using System;
 namespace EmailProcessing.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171214134001_change_name_tables1")]
+    partial class change_name_tables1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +44,7 @@ namespace EmailProcessing.DAL.Migrations
                     b.ToTable("ParamSettings");
                 });
 
-            modelBuilder.Entity("EmailProcessing.DAL.Entities.ParamType", b =>
+            modelBuilder.Entity("EmailProcessing.DAL.Entities.PramType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -54,7 +55,7 @@ namespace EmailProcessing.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ParamTypes");
+                    b.ToTable("PramTypes");
                 });
 
             modelBuilder.Entity("EmailProcessing.DAL.Entities.RequestType", b =>
@@ -269,7 +270,7 @@ namespace EmailProcessing.DAL.Migrations
 
             modelBuilder.Entity("EmailProcessing.DAL.Entities.ParamSetting", b =>
                 {
-                    b.HasOne("EmailProcessing.DAL.Entities.ParamType", "PramType")
+                    b.HasOne("EmailProcessing.DAL.Entities.PramType", "PramType")
                         .WithMany()
                         .HasForeignKey("PramTypeId");
 

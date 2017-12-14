@@ -2,11 +2,11 @@
 
 namespace EmailProcessing.DAL.Entities
 {
-    public class TypePram
+    public class RequestType
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public string TypeName { get; set; }
+        public string FormatMessage { get; set; }
     }
 }

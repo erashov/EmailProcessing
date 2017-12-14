@@ -11,8 +11,8 @@ namespace EmailProcessing.DAL
         }
         public DbSet<Setting> Serrings { get; set; }
         public DbSet<ParamSetting> ParamSettings { get; set; }
-        public DbSet<TypePram> TypeParams { get; set; }
-        public DbSet<TypeRequest> RepeRequests { get; set; }
+        public DbSet<ParamType> ParamTypes { get; set; }
+        public DbSet<RequestType> RequestTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

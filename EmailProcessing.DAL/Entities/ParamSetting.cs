@@ -9,8 +9,8 @@ namespace EmailProcessing.DAL.Entities
         [Required]
         public string Name { get; set; }
         public string FullName { get; set; }
-        public int? TypePramId { get; set; }
-        public virtual TypePram TypePram { get; set; }
+        public int? PramTypeId { get; set; }
+        public virtual ParamType PramType { get; set; }
         public int? SettingId { get; set; }
         public virtual Setting Setting { get; set; }
 

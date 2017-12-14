@@ -1,4 +1,5 @@
-﻿using MailKit;
+﻿using EmailProcessing.DAL.Entities;
+using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
@@ -11,7 +12,7 @@ namespace EmailProcessing.Service
 {
     public class EmailService : IEmailService
     {
-        public Task<int> PaerserEmailAsync(string imapserv, string email, string password, string subject)
+        public Task<int> PaerserEmailAsync(Setting setting)
         {
             Task<int> test1 = null;
 
@@ -20,11 +21,11 @@ namespace EmailProcessing.Service
             {
                 // Note: depending on your server, you might need to connect
                 // on port 993 using SecureSocketOptions.SslOnConnect
-                client.Connect("mail.akado-telecom.ru", 993, SecureSocketOptions.SslOnConnect);
+                client.Connect(setting.ImapServer, setting.ImapPort, SecureSocketOptions.SslOnConnect);
 
 
                 // Note: use your real username/password here...
-                client.Authenticate("startultimus@akado-telecom.ru", "SnrQF5kX");
+                client.Authenticate(setting.InputMail, setting.InputMailPassword);
 
                 // open the Inbox folder...
                 client.Inbox.Open(FolderAccess.ReadOnly);
@@ -43,10 +44,10 @@ namespace EmailProcessing.Service
                     string landin;//= "(\S+?)\s*=\s*(\S+)";
                     string datacreate;
                     string phoneNumber;
-                    if (message.Subject == "Заявка из метро")
+                    if (message.Subject == setting.Subject)
                     {
                         // Regex r = new Regex(@"(\S+?)\s*:\s*(\S+)");
-                        var ItemRegex = new Regex(@"(\S+?)\s*:\s*(\S+)", RegexOptions.Compiled);
+                        var ItemRegex = new Regex(setting.RegexMask, RegexOptions.Compiled);
                         var OrderList = ItemRegex.Matches(message.TextBody)
                                             .Cast<Match>()
                                             .Select(m => new

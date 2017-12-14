@@ -19,8 +19,8 @@ namespace EmailProcessing.DAL.Entities
         public string SmptServer { get; set; }
         public short SmptPort { get; set; }
         public string RegexMask { get; set; }
-        public int? TypeRequestId { get; set; }
-        public virtual TypeRequest TypeRequest { get; set; }
+        public int? RequestTypeId { get; set; }
+        public virtual RequestType RequestType { get; set; }
         public List<ParamSetting> ParamSettings { get; set; }
 
     }
