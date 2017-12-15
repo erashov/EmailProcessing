@@ -30,17 +30,18 @@ namespace EmailProcessing.CLI
             var serviceProvider = new ServiceCollection().AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DBConnection"), sql => sql.MigrationsAssembly(migrationsAssembly)))
                        .AddLogging()
-                       .AddSingleton<IEmailService, EmailService>().AddTransient<IBaseRepository<Setting>, EmailProcessingRepository>()
+                       .AddSingleton<IEmailService, EmailService>().AddSingleton<ISoapService, SoapService>().AddTransient<IBaseRepository<Setting>, EmailProcessingRepository>()
                           .BuildServiceProvider();
 
 
   
             //do the actual work here
             var bar = serviceProvider.GetService<IEmailService>();
+
             var settings = serviceProvider.GetService<IBaseRepository<Setting>>();
             foreach(var s in settings.Find()) {
 
-                var cc = bar.PaerserEmailAsync(s);
+                var cc = bar.PaerserEmailAsync(s, serviceProvider.GetService<ISoapService>());
                 Console.WriteLine($"Count:{cc.Result}");
             }
             

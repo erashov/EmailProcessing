@@ -9,6 +9,6 @@ namespace EmailProcessing.Service
    public interface IEmailService
     {
         Task SendEmailAsync(string email, string subject, string message);
-        Task<int> PaerserEmailAsync(Setting setting);
+        Task<int> PaerserEmailAsync(Setting setting, ISoapService soapService);
     }
 }

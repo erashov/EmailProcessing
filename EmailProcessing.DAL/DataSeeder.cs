@@ -32,8 +32,7 @@ namespace EmailProcessing.DAL
             if (await _roleManager.FindByNameAsync("userRole") == null)
             {
                 await _roleManager.CreateAsync(new IdentityRole("userRole"));
-            }
-            //  string[] addresses = new string[] { "Варшавское шоссе", "ул. Академика Янгеля", "ул. Чертановская", "Рязанский пр.", "Волгоградский пр.", "ш. Энтузиастов", "ул. Россошанская", "ул. Ленинское шоссе", "ул. Охотный ряд", "ул. Воздвиженка", "ул. Новослободская", "ул. Трифоновская" };
+            }           
             if (!_ctx.Users.Any())
             {
 

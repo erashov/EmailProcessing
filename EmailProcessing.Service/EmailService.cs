@@ -12,30 +12,24 @@ namespace EmailProcessing.Service
 {
     public class EmailService : IEmailService
     {
-        public Task<int> PaerserEmailAsync(Setting setting)
+        public Task<int> PaerserEmailAsync(Setting setting, ISoapService soapService)
         {
             Task<int> test1 = null;
 
 
             using (var client = new ImapClient())
             {
-                // Note: depending on your server, you might need to connect
-                // on port 993 using SecureSocketOptions.SslOnConnect
+
                 client.Connect(setting.ImapServer, setting.ImapPort, SecureSocketOptions.SslOnConnect);
 
-
-                // Note: use your real username/password here...
                 client.Authenticate(setting.InputMail, setting.InputMailPassword);
 
-                // open the Inbox folder...
                 client.Inbox.Open(FolderAccess.ReadOnly);
 
-                // search the folder for new messages (aka recently
-                // delivered messages that have not been read yet)
+
                 var uids = client.Inbox.Search(SearchQuery.New);
                 // uids = client.Inbox.Search(SearchQuery.SubjectContains("Заявка из метро"));
 
-                // ...but maybe you mean unread messages? if so, use this query
                 uids = client.Inbox.Search(SearchQuery.NotSeen);
 
                 foreach (var uid in uids)
@@ -46,7 +40,7 @@ namespace EmailProcessing.Service
                     string phoneNumber;
                     if (message.Subject == setting.Subject)
                     {
-                        // Regex r = new Regex(@"(\S+?)\s*:\s*(\S+)");
+ 
                         var ItemRegex = new Regex(setting.RegexMask, RegexOptions.Compiled);
                         var OrderList = ItemRegex.Matches(message.TextBody)
                                             .Cast<Match>()
@@ -57,6 +51,7 @@ namespace EmailProcessing.Service
                                             })
                                             .ToList();
 
+                        soapService.SendRequest("message");
 
                         //foreach (Match m in r.Matches(message.TextBody))
                         //{
