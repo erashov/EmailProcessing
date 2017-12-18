@@ -1,9 +1,10 @@
 ﻿using EmailProcessing.DAL.Entities;
+using EmailProcessing.Model.EmailProcessingViewModels;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,10 +13,9 @@ namespace EmailProcessing.Service
 {
     public class EmailService : IEmailService
     {
-        public Task<int> PaerserEmailAsync(Setting setting, ISoapService soapService)
+        public Task<List<Message>> PaerserEmailAsync(Setting setting, ISoapService soapService)
         {
-            Task<int> test1 = null;
-
+            List<Message> messages = new List<Message>();
 
             using (var client = new ImapClient())
             {
@@ -24,75 +24,67 @@ namespace EmailProcessing.Service
 
                 client.Authenticate(setting.InputMail, setting.InputMailPassword);
 
-                client.Inbox.Open(FolderAccess.ReadOnly);
-
-
+                client.Inbox.Open(FolderAccess.ReadWrite);
+              
                 var uids = client.Inbox.Search(SearchQuery.New);
-                // uids = client.Inbox.Search(SearchQuery.SubjectContains("Заявка из метро"));
-
                 uids = client.Inbox.Search(SearchQuery.NotSeen);
 
                 foreach (var uid in uids)
                 {
                     var message = client.Inbox.GetMessage(uid);
-                    string landin;//= "(\S+?)\s*=\s*(\S+)";
-                    string datacreate;
-                    string phoneNumber;
+
                     if (message.Subject == setting.Subject)
                     {
- 
                         var ItemRegex = new Regex(setting.RegexMask, RegexOptions.Compiled);
-                        var OrderList = ItemRegex.Matches(message.TextBody)
+                        var AllParamList = ItemRegex.Matches(message.TextBody)
                                             .Cast<Match>()
                                             .Select(m => new
                                             {
                                                 Name = m.Groups[1].ToString(),
-                                                Count = m.Groups[2].ToString()
+                                                Value = m.Groups[2].ToString()
                                             })
                                             .ToList();
-
-                        soapService.SendRequest("message");
-
-                        //foreach (Match m in r.Matches(message.TextBody))
-                        //{
-                        //    landin = m.ToString();
-                        //}
-                        //string[] lines = message.TextBody.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                        //foreach (var str in lines)
-                        //{
-
-                        //    if (str.Contains("Лендинг:"))
-                        //    {
-                        //        var arr = str.Split(':');
-                        //        landin = arr[1];
-                        //    }
-                        //    if (str.Contains("Дата создания:"))
-                        //    {
-                        //        var arr = str.Split(':');
-                        //        datacreate = arr[1];
-                        //    }
-                        //    if (str.Contains("Введенный номер телефона:"))
-                        //    {
-                        //        var arr = str.Split(':');
-                        //        phoneNumber = arr[1];
-                        //    }
-
-                        //}
-
+                        var paramList = AllParamList.Join(setting.ParamSettings, ap => ap.Name, cp => cp.FullName, (paramsetting, parammessage) => new ParamMessage { Name = parammessage.Name, Value = paramsetting.Value }).ToList();
+                       var resultService= soapService.SendRequest(setting, paramList);
+                        if (resultService == "sucsess")
+                        {
+                           client.Inbox.AddFlags(uid, MessageFlags.Seen, true);
+                            
+                        }
                     }
 
-
-
                 }
-
-                test1 = Task.Run(() => uids.Count);
-                // Console.WriteLine("You have {0} unread message(s).", uids.Count);
-
                 client.Disconnect(true);
             }
-            return test1;
+            return Task.Run(() => messages); ;
         }
 
+        public Task MarkAsRead(Setting setting, List<Message> messages)
+        {
+            using (var client = new ImapClient())
+            {
+
+                client.Connect(setting.ImapServer, setting.ImapPort, SecureSocketOptions.SslOnConnect);
+
+                client.Authenticate(setting.InputMail, setting.InputMailPassword);
+
+                client.Inbox.Open(FolderAccess.ReadWrite);
+                var uids = client.Inbox.Search(SearchQuery.New);
+
+                uids = client.Inbox.Search(SearchQuery.NotSeen);
+                foreach (var uid in uids)
+                {
+                    if(client.Inbox.GetMessage(uid)?.MessageId == messages.FirstOrDefault().MessageID)
+                    {
+                        var ms = client.Inbox.GetMessage(uid);
+                    }
+                }
+            
+
+
+            }
+            return Task.CompletedTask;
+        }
         public Task SendEmailAsync(string email, string subject, string message)
         {
             return Task.CompletedTask;

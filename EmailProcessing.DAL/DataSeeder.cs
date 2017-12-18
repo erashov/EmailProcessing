@@ -80,7 +80,7 @@ namespace EmailProcessing.DAL
                         Name="Заявка из метро",
                         Subject="Заявка из метро",
                         RequestTypeId=1,
-                        RegexMask=@"(\S+?)\s*:\s*(\S+)",
+                        RegexMask=@"\W*([^[:]+):\s*(\S+)",
                         ServiceUrl="localhost:5000/api/Application"
                     },
                        new Setting(){

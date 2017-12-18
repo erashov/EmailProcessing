@@ -1,4 +1,5 @@
 ﻿using EmailProcessing.DAL.Entities;
+using EmailProcessing.Model.EmailProcessingViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,7 @@ namespace EmailProcessing.Service
    public interface IEmailService
     {
         Task SendEmailAsync(string email, string subject, string message);
-        Task<int> PaerserEmailAsync(Setting setting, ISoapService soapService);
+        Task<List<Message>> PaerserEmailAsync(Setting setting, ISoapService soapService);
+        Task MarkAsRead(Setting setting, List<Message> messages);
     }
 }

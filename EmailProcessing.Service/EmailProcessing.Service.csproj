@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmailProcessing.DAL\EmailProcessing.DAL.csproj" />
+    <ProjectReference Include="..\EmailProcessing.Model\EmailProcessing.Model.csproj" />
   </ItemGroup>
 
 </Project>
